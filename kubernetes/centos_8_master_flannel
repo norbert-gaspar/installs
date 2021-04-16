@@ -43,5 +43,5 @@ kubectl apply -f https://github.com/coreos/flannel/raw/master/Documentation/kube
 sudo systemctl stop firewalld
 sudo systemctl disable firewalld
 
-echo "K8s is installed on Master."
-echo "Run 'kubectl get nodes' to verify installation after all workers joined."
+echo "K8s is installed on Master"
+echo "Run 'kubectl get nodes' to verify installation after all workers joined"

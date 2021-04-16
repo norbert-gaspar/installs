@@ -38,6 +38,6 @@ rm -r .kube
 sudo systemctl stop firewalld
 sudo systemctl disable firewalld
 
-echo "K8s is installed on worker."
-echo "Copy paste the join command from master and run it as sudo to join the cluster."
+echo "K8s is installed on worker"
+echo "Copy paste the join command from master and run it as sudo to join the cluster"
 echo "Format is: sudo kubeadm join --token <token> <ip>:6443"
