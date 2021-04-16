@@ -34,10 +34,10 @@ sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 sudo systemctl enable --now kubelet
 rm -r .kube
 sudo kubeadm init --pod-network-cidr=10.244.0.0/16
-sudo cp /etc/kubernetes/admin.conf $HOME/ &> /dev/null
-sudo chown $(id -u):$(id -g) $HOME/admin.conf &> /dev/null
-export KUBECONFIG=$HOME/admin.conf &> /dev/null
-kubectl apply -f https://github.com/coreos/flannel/raw/master/Documentation/kube-flannel.yml &> /dev/null
+sudo cp /etc/kubernetes/admin.conf $HOME/
+sudo chown $(id -u):$(id -g) $HOME/admin.conf
+export KUBECONFIG=$HOME/admin.conf
+kubectl apply -f https://github.com/coreos/flannel/raw/master/Documentation/kube-flannel.yml
 
 # Only way it worked so far, but it has to be fixed ASAP.
 sudo systemctl stop firewalld
