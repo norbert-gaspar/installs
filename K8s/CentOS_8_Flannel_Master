@@ -1,0 +1,47 @@
+sudo yum remove -y docker \
+ docker-client \
+ docker-client-latest \
+ docker-common \
+ docker-latest \
+ docker-latest-logrotate \
+ docker-logrotate \
+ docker-engine
+sudo yum install -y yum-utils
+sudo yum-config-manager \
+ --add-repo \
+ https://download.docker.com/linux/centos/docker-ce.repo
+sudo dnf remove -y podman buildah
+sudo yum install -y docker-ce docker-ce-cli containerd.io
+sudo systemctl start docker
+sudo docker run hello-world
+cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-\$basearch
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+exclude=kubelet kubeadm kubectl
+EOF
+
+# Set SELinux in permissive mode (effectively disabling it)
+sudo setenforce 0
+sudo sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
+
+sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+
+sudo systemctl enable --now kubelet
+rm -r .kube
+sudo kubeadm init --pod-network-cidr=10.244.0.0/16
+sudo cp /etc/kubernetes/admin.conf $HOME/ &> /dev/null
+sudo chown $(id -u):$(id -g) $HOME/admin.conf &> /dev/null
+export KUBECONFIG=$HOME/admin.conf &> /dev/null
+kubectl apply -f https://github.com/coreos/flannel/raw/master/Documentation/kube-flannel.yml &> /dev/null
+
+# Only way it worked so far, but it has to be fixed ASAP.
+sudo systemctl stop firewalld
+sudo systemctl disable firewalld
+
+echo "K8s is installed on Master."
+echo "Run 'kubectl get nodes' to verify installation after all workers joined."
