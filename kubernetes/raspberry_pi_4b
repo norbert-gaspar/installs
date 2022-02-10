@@ -1,0 +1,41 @@
+1. Go to https://www.raspberrypi.com/software/
+2. Download the correct imager
+3. Insert SD card into PC
+4. Run Raspberry Pi Imager from Start menu (allow to run as administrator)
+5. Choose correct Operating System (Raspberry Pi OS Lite (64-bit)
+6. Choose Storage, then click "WRITE
+7. Once finished, open SD card in Explorer
+8. Create "SSH" file, without extension
+9. Create "wpa_supplicant.conf" file
+10. Open wpa_supplicant.conf and add the following text:
+
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+country=<Insert 2 letter ISO 3166-1 country code here>
+update_config=1
+
+network={
+ ssid="<Name of your wireless LAN>"
+ psk="<Password for your wireless LAN>"
+}
+
+11. Remove SD card from PC, plug it into Raspberry Pi and turn it on
+12. If IP address is known, connect via putty (https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html)
+13. If IP address is unknown, download and install Zenmap (https://nmap.org/download.html)
+14. Figure out IP range
+15. Scan IP range analogue to the below command: nmap -T4 -A -p 22 -v 192.168.1.0/24
+16. Connect to found IP address using putty
+17. Default credentials are pi/raspberry
+18. Change password with the "passwd" command
+19. Enter the following:
+
+sudo apt-get update
+sudo apt-get -y upgrade
+sudo apt-get -y dist-upgrade
+sudo apt-get install snapd
+sudo snap install microk8s --classic
+sudo usermod -a -G microk8s pi
+sudo chown -f -R pi ~/.kube
+newgrp microk8s
+PATH=$PATH:/snap/bin
+
+20. To create new master enter: microk8s add-node - This provides the command to join the cluster for any further node.
